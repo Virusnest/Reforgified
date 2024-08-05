@@ -1,0 +1,12 @@
+{
+  "weight": 12,
+  "modifiers": [
+    {
+      "id": "asd",
+      "attribute": "minecraft:generic.max_health",
+      "amount": 1,
+      "operation": "add_value",
+      "slot": "mainhand"
+    }
+    ]
+}

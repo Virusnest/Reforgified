@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "reforgified",
+  "version": "${version}",
+  "name": "Reforgified",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/virusnest/Reforgified"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/reforgified/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.virusnest.reforgified.client.ReforgifiedClient"
+    ],
+    "main": [
+      "me.virusnest.reforgified.Reforgified"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
