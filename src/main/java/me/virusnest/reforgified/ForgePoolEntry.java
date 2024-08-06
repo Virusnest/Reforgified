@@ -5,6 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class ForgePoolEntry {
         this.attributeList = attributeList;
         this.name = name;
     }
+
     private final String name;
     private final int weight;
     private final List<EntityAttribute> attributeList;
@@ -39,5 +42,19 @@ public class ForgePoolEntry {
         return name;
     }
 
+    public record ForgeTypeComponent(RegistryKey<ForgePoolEntry> forgePool) {
+
+        public static final Codec<ForgeTypeComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                RegistryKey.createCodec(Reforgified.FORGE_POOLS).fieldOf("inject").forGetter(ForgeTypeComponent::getForgePool)
+        ).apply(instance, ForgeTypeComponent::new));
+
+        public RegistryKey<ForgePoolEntry> getForgePool() {
+            return forgePool;
+        }
+
+
+
+
+    }
 
 }
