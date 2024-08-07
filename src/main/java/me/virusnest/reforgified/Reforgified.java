@@ -6,7 +6,9 @@ import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.component.ComponentType;
+import net.minecraft.item.Instrument;
 import net.minecraft.registry.*;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +19,18 @@ public class Reforgified implements ModInitializer {
     // That way, it's clear which mod wrote info, warnings, and errors.
     public static final String MOD_ID = "reforgified";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final ComponentType<?> MY_COMPONENT_TYPE = Registry.register(
-            Registries.DATA_COMPONENT_TYPE,
-            Identifier.of(MOD_ID, "forge_type"),
-            ComponentType.<ForgePoolEntry>builder().codec(ForgePoolEntry.CODEC).build()
-    );
+
+
     public static RegistryKey<Registry<ForgePoolEntry>> FORGE_POOLS = RegistryKey.ofRegistry(Identifier.of(MOD_ID, "forge_pools"));
-    public static SimpleRegistry<ForgePoolEntry> FORGE_POOL = FabricRegistryBuilder.createSimple(FORGE_POOLS)
+    public static ForgePoolEntry COMMON = register(new ForgePoolEntry(1, 1.0f, null, "common"), "common");
+    public static SimpleRegistry<ForgePoolEntry> FORGE_POOL = FabricRegistryBuilder.createDefaulted(FORGE_POOLS,Identifier.of(MOD_ID,"common"))
             .attribute(RegistryAttribute.SYNCED)
             .buildAndRegister();
-
-
+    public static ComponentType<?> FORGE_TYPE_COMPONENT = Registry.register(
+            Registries.DATA_COMPONENT_TYPE,
+            Identifier.of(MOD_ID, "forge_type"),
+            ComponentType.<RegistryEntry<ForgePoolEntry>>builder().codec(FORGE_POOL.getEntryCodec()).build()
+    );
     @Override
     public void onInitialize() {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -35,7 +38,15 @@ public class Reforgified implements ModInitializer {
         // Proceed with mild caution.
         LOGGER.info("Hello Fabric world!");
 
+    }
+    public static ForgePoolEntry register(ForgePoolEntry item, String id) {
+        // Create the identifier for the item.
+        Identifier poolID = Identifier.of(MOD_ID, id);
 
+        // Register the item.
+        ForgePoolEntry registeredPool = Registry.register(FORGE_POOL, poolID, item);
 
+        // Return the registered item!
+        return registeredPool;
     }
 }

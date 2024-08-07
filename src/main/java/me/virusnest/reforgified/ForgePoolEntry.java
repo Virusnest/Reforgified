@@ -4,9 +4,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.item.Instrument;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryElementCodec;
+import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.List;
 
@@ -17,6 +21,7 @@ public class ForgePoolEntry {
             Registries.ATTRIBUTE.getCodec().listOf().fieldOf("attributes").forGetter(ForgePoolEntry::getAttributeList),
             Codec.STRING.fieldOf("name").forGetter(ForgePoolEntry::getName)
             ).apply(instance, ForgePoolEntry::new));
+    public static final Codec<RegistryEntry<ForgePoolEntry>> ENTRY_CODEC = RegistryElementCodec.of(Reforgified.FORGE_POOLS, CODEC);
     public ForgePoolEntry(int weight, float multiplier, List<EntityAttribute> attributeList, String name) {
         this.weight = weight;
         this.multiplier = multiplier;
@@ -44,14 +49,12 @@ public class ForgePoolEntry {
 
     public record ForgeTypeComponent(RegistryKey<ForgePoolEntry> forgePool) {
 
-        public static final Codec<ForgeTypeComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                RegistryKey.createCodec(Reforgified.FORGE_POOLS).fieldOf("inject").forGetter(ForgeTypeComponent::getForgePool)
-        ).apply(instance, ForgeTypeComponent::new));
 
-        public RegistryKey<ForgePoolEntry> getForgePool() {
-            return forgePool;
-        }
-
+        public static final Codec<ForgeTypeComponent> CODEC = RecordCodecBuilder.create(builder -> {
+            return builder.group(
+                   RegistryKey.createCodec(Reforgified.FORGE_POOLS).fieldOf("id").forGetter(ForgeTypeComponent::forgePool)
+            ).apply(builder, ForgeTypeComponent::new);
+        });
 
 
 
